@@ -24,6 +24,13 @@ export default class UserService {
             .updateOne({ _id }, { active: false });
     }
 
+    public async getUsers(limit: number = 20, offset: number = 0): Promise<User[]> {
+        const query = this.client.db('docapi')
+            .collection('users_data').find({})
+            .limit(limit).skip(offset);
+        return await query.toArray();
+    }
+
 }
 
 export declare interface User {

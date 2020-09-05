@@ -31,7 +31,20 @@ route.delete('/:user_id', (req, res) => {
 });
 
 route.get('/users', (req, res) => {
+    const { limit, offset } = req.query;
+    if (!limit || !offset) {
+        return res.status(400).send({
+            mensagem: 'Parâmetros de consulta não informados'
+        });
+    }
 
+    Service.getUsers(Number(limit), Number(offset)).then(users => {
+        res.status(200).send(users);
+    }).catch(() => {
+        res.status(400).send({
+            mensagem: 'Não foi possível localizar os usuários'
+        });
+    });
 });
 
 route.get('/users/filter', (req, res) => {
