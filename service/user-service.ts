@@ -2,12 +2,6 @@ import { MongoClient } from 'mongodb'
 
 export default class UserService {
 
-    private readonly client: MongoClient;
-
-    public constructor() {
-        this.client = (global as any).client as MongoClient;
-    }
-
     public async createUser(email: string, nome: string): Promise<void> {
         const data_criacao = new Date()
             .toLocaleDateString();
@@ -42,6 +36,10 @@ export default class UserService {
             .collection('users_data').find({})
             .limit(limit).skip(offset);
         return await query.toArray();
+    }
+
+    private get client(): MongoClient {
+        return (global as any).client as MongoClient;
     }
 
 }
