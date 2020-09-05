@@ -19,9 +19,16 @@ export default class UserService {
         throw new Error('Usuário não localizado');
     }
 
+    public async deleteUser(_id: string): Promise<void> {
+        await this.client.db('docapi').collection('users')
+            .updateOne({ _id }, { active: false });
+    }
+
 }
 
 export declare interface User {
+
+    readonly active: boolean;
 
     readonly email: string;
 

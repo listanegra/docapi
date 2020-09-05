@@ -34,6 +34,12 @@ api.post('/login', async (req, res) => {
         const hash = crypto.createHash('sha512')
             .update(password).digest('hex');
 
+        if (!user['active']) {
+            return res.status(401).send({
+                mensagem: 'Usuário inativo'
+            });
+        }
+
         if (user['hash'] === hash) {
             const token = jwt.sign({ id: user['_id'] }, SECRET, {
                 expiresIn: 3600

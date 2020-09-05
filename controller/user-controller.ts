@@ -21,7 +21,13 @@ route.patch('/:user_id', (req, res) => {
 });
 
 route.delete('/:user_id', (req, res) => {
-
+    Service.deleteUser(req.params['user_id']).then(() => {
+        res.status(200).send();
+    }).catch(() => {
+        res.status(400).send({
+            mensagem: 'Erro ao deletar usuário'
+        });
+    });
 });
 
 route.get('/users', (req, res) => {
