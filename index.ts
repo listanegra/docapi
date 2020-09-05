@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken'
 import express, { Request } from 'express'
 import { MongoClient } from 'mongodb'
 
-import UserController from './controller/user-controller'
+import UserController, { Service } from './controller/user-controller'
 
 if (!process.env['MONGODB_URL']) {
     throw new Error('Informe a URL da instância MongoDB no arquivo ".env" ou nas váriaveis de ambiente de seu sistema');
@@ -70,22 +70,12 @@ api.use((req, res, next) => {
     });
 });
 
-api.get('/me', async (req, res) => {
+api.get('/me', (req, res) => {
     const request = req as UserRequest;
-    const client = (global as any).client as MongoClient;
-
-    const query = client.db('docapi')
-        .collection('users_data').find({
-            _id: request.user
-        });
-
-    if (await query.hasNext()) {
-        const data = await query.next();
-        return res.status(200).send(data);
-    }
-
-    res.status(400).send({
-        mensagem: 'Não foi possível localizar o usuário'
+    Service.getUser(request.user).then(user => {
+        res.status(200).send(user);
+    }).catch((error: Error) => {
+        res.status(400).send({ mensagem: error.message });
     });
 });
 
