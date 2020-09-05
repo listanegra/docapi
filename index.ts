@@ -78,7 +78,7 @@ api.post('/user', async (req, res) => {
     const result = await client.db('docapi').collection('users')
         .insertOne({ username, hash, active: true });
 
-    await Service.createUser(email, nome);
+    await Service.createUser(result.insertedId, email, nome);
     const token = jwt.sign({ id: result.insertedId },
         SECRET, { expiresIn: 3600 });
     return res.status(200).send({ token });

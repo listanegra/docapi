@@ -2,7 +2,7 @@ import { MongoClient } from 'mongodb'
 
 export default class UserService {
 
-    public async createUser(email: string, nome: string): Promise<void> {
+    public async createUser(_id: string, email: string, nome: string): Promise<void> {
         const data_criacao = new Date()
             .toLocaleDateString();
         const user = {
@@ -10,8 +10,8 @@ export default class UserService {
             data_criacao
         } as User;
 
-        await this.client.db('docapi')
-            .collection('users_data').insertOne(user);
+        await this.client.db('docapi').collection('users_data')
+            .insertOne(Object.assign({ _id }, user));
     }
 
     public async getUser(_id: string): Promise<User> {
