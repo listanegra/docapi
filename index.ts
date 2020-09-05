@@ -76,7 +76,7 @@ api.post('/user', async (req, res) => {
     const hash = crypto.createHash('sha512')
         .update(password).digest('hex');
     const result = await client.db('docapi').collection('users')
-        .insertOne({ username, hash });
+        .insertOne({ username, hash, active: true });
 
     await Service.createUser(email, nome);
     const token = jwt.sign({ id: result.insertedId },

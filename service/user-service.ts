@@ -6,7 +6,6 @@ export default class UserService {
         const data_criacao = new Date()
             .toLocaleDateString();
         const user = {
-            active: true,
             email, nome,
             data_criacao
         } as User;
