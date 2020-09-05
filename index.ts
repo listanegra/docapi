@@ -57,6 +57,33 @@ api.post('/login', async (req, res) => {
     });
 });
 
+api.post('/user', async (req, res) => {
+    const { username, password, email, nome } = req.body;
+    if (!username || !password || !email || !nome) {
+        return res.status(400).send();
+    }
+
+    const client = (global as any).client as MongoClient;
+    const query = client.db('docapi')
+        .collection('users').find({ username });
+
+    if (await query.hasNext()) {
+        return res.status(400).send({
+            mensagem: 'Usuário já cadastrado'
+        });
+    }
+
+    const hash = crypto.createHash('sha512')
+        .update(password).digest('hex');
+    const result = await client.db('docapi').collection('users')
+        .insertOne({ username, hash });
+
+    await Service.createUser(email, nome);
+    const token = jwt.sign({ id: result.insertedId },
+        SECRET, { expiresIn: 3600 });
+    return res.status(200).send({ token });
+});
+
 api.use((req, res, next) => {
     const token = (req.headers['authorization'] || '')
         .split(/\s/g, 2)[1];

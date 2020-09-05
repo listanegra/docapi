@@ -8,6 +8,19 @@ export default class UserService {
         this.client = (global as any).client as MongoClient;
     }
 
+    public async createUser(email: string, nome: string): Promise<void> {
+        const data_criacao = new Date()
+            .toLocaleDateString();
+        const user = {
+            active: true,
+            email, nome,
+            data_criacao
+        } as User;
+
+        await this.client.db('docapi')
+            .collection('users_data').insertOne(user);
+    }
+
     public async getUser(_id: string): Promise<User> {
         const query = this.client.db('docapi')
             .collection('users_data').find({ _id });
