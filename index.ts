@@ -4,6 +4,8 @@ dotenv.config();
 import express from 'express'
 import { MongoClient } from 'mongodb'
 
+import UserController from './controller/user-controller'
+
 if (!process.env['MONGODB_URL']) {
     throw new Error('Informe a URL da instância MongoDB no arquivo ".env" ou nas váriaveis de ambiente de seu sistema');
 }
@@ -22,6 +24,8 @@ api.use((req, res, next) => {
 api.get('/me', (req, res) => {
 
 });
+
+api.use('/user', UserController);
 
 const MONGO_URL = process.env['MONGODB_URL'] as string;
 MongoClient.connect(MONGO_URL, { useUnifiedTopology: true })
