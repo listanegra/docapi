@@ -1,5 +1,5 @@
 import express, { Request } from 'express'
-import UserService from '../service/user-service';
+import UserService, { User } from '../service/user-service';
 
 const route = express.Router();
 export const Service = new UserService();
@@ -19,7 +19,27 @@ route.get('/:user_id', (req, res) => {
 });
 
 route.patch('/:user_id', (req, res) => {
+    const request = req as UserRequest;
+    const { email, nome } = req.body;
 
+    if (!email && !nome) {
+        return res.status(400).send();
+    }
+
+    if (request.user !== req.params['user_id']) {
+        return res.status(400).send({
+            mensagem: 'Permissão insuficiente'
+        });
+    }
+
+    const data = { email, nome } as User;
+    Service.editUser(request.user, data).then(() => {
+        res.status(200).send();
+    }).catch(() => {
+        res.status(400).send({
+            mensagem: 'Erro ao editar usuário'
+        });
+    });
 });
 
 route.delete('/:user_id', (req, res) => {
