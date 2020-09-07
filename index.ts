@@ -4,10 +4,10 @@ dotenv.config();
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 
-import express, { Request } from 'express'
+import express from 'express'
 import { MongoClient } from 'mongodb'
 
-import UserController, { Service } from './controller/user-controller'
+import UserController, { Service, UserRequest } from './controller/user-controller'
 
 if (!process.env['MONGODB_URL']) {
     throw new Error('Informe a URL da instância MongoDB no arquivo ".env" ou nas váriaveis de ambiente de seu sistema');
@@ -120,9 +120,3 @@ MongoClient.connect(MONGO_URL, { useUnifiedTopology: true })
         Object.assign(global, { client });
         api.listen(process.env['PORT'] || 3000);
     });
-
-declare interface UserRequest extends Request {
-
-    readonly user: string;
-
-}

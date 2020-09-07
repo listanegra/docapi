@@ -1,8 +1,14 @@
-import express from 'express'
+import express, { Request } from 'express'
 import UserService from '../service/user-service';
 
 const route = express.Router();
 export const Service = new UserService();
+
+export declare interface UserRequest extends Request {
+
+    readonly user: string;
+
+}
 
 route.get('/:user_id', (req, res) => {
     Service.getUser(req.params['user_id']).then(user => {
