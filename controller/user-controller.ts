@@ -23,7 +23,14 @@ route.patch('/:user_id', (req, res) => {
 });
 
 route.delete('/:user_id', (req, res) => {
-    Service.deleteUser(req.params['user_id']).then(() => {
+    const request = req as UserRequest;
+    if (request.user !== req.params['user_id']) {
+        return res.status(400).send({
+            mensagem: 'Permissão insuficiente'
+        });
+    }
+
+    Service.deleteUser(request.user).then(() => {
         res.status(200).send();
     }).catch(() => {
         res.status(400).send({
