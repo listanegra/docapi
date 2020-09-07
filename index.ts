@@ -105,6 +105,8 @@ api.use((req, res, next) => {
     });
 });
 
+api.get('/validar', (req, res) => res.status(200).send());
+
 api.get('/me', (req, res) => {
     const request = req as UserRequest;
     Service.getUser(request.user).then(user => {
