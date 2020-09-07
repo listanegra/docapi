@@ -4,6 +4,7 @@ dotenv.config();
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 
+import cors from 'cors'
 import express from 'express'
 import { MongoClient } from 'mongodb'
 
@@ -18,6 +19,7 @@ const SECRET = '5a8b1e38e2485653a944e2fa13e720340b1eaf5c';
 
 const api = express();
 api.use(express.json());
+api.use(cors());
 
 api.post('/login', async (req, res) => {
     const { username, password } = req.body;
