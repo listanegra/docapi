@@ -28,7 +28,27 @@ route.get('/users', (req, res) => {
 });
 
 route.get('/users/filter', (req, res) => {
+    const {
+        nome,
+        email,
+        data_cadastro,
+        data_inicial,
+        data_final
+    } = req.body;
 
+    if (!nome && !email && !data_cadastro && !data_inicial && !data_final) {
+        return res.status(400).send({
+            mensagem: 'Informe ao menos um parâmetro de consulta'
+        });
+    }
+
+    Service.findUsers(nome, email, data_cadastro, data_inicial, data_final).then(users => {
+        res.status(200).send(users);
+    }).catch(() => {
+        res.status(400).send({
+            mensagem: 'Não foi possível localizar os usuários'
+        });
+    });
 });
 
 route.get('/:user_id', (req, res) => {

@@ -1,4 +1,4 @@
-import { MongoClient, ObjectId } from 'mongodb'
+import { MongoClient, ObjectId, Cursor } from 'mongodb'
 import moment from 'moment'
 
 export default class UserService {
@@ -54,6 +54,57 @@ export default class UserService {
             .limit(Math.abs(limit) || 20)
             .skip(Math.abs(offset) || 0);
         return await query.toArray();
+    }
+
+    public async findUsers(nome?: string, email?: string, data_cadastro?: string, data_inicial?: string, data_final?: string): Promise<User[]> {
+        const collection = this.client.db('docapi')
+            .collection('users_data');
+        const query = ((): Cursor | undefined => {
+            if (nome) {
+                return collection.find({ nome });
+            }
+
+            if (email) {
+                return collection.find({ email });
+            }
+
+            if (data_cadastro) {
+                return collection.find({
+                    data_criacao: moment(data_cadastro)
+                        .toDate().getTime()
+                });
+            }
+
+            if (data_inicial && !data_final) {
+                return collection.find({
+                    data_criacao: {
+                        $gte: moment(data_inicial)
+                            .toDate().getTime()
+                    }
+                });
+            } else if (!data_inicial && data_final) {
+                return collection.find({
+                    data_criacao: {
+                        $lte: moment(data_final)
+                            .toDate().getTime()
+                    }
+                });
+            } else if (data_inicial && data_final) {
+                return collection.find({
+                    data_criacao: {
+                        $gte: moment(data_inicial)
+                            .toDate().getTime(),
+                        $lte: moment(data_final)
+                            .toDate().getTime()
+                    }
+                });
+            }
+        })();
+
+        if (query !== undefined) {
+            return await query.toArray();
+        }
+        return [];
     }
 
     private get client(): MongoClient {
