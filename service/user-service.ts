@@ -1,10 +1,12 @@
 import { MongoClient, ObjectId } from 'mongodb'
+import moment from 'moment'
 
 export default class UserService {
 
     public async createUser(_id: ObjectId, email: string, nome: string): Promise<void> {
-        const data_criacao = new Date()
-            .toLocaleDateString();
+        const data_criacao = moment().startOf('day')
+            .toDate().getTime();
+
         const user = {
             email, nome,
             data_criacao
@@ -68,6 +70,6 @@ export declare interface User {
 
     readonly nome: string;
 
-    readonly data_criacao: string;
+    readonly data_criacao: number;
 
 }
