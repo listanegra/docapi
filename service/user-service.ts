@@ -46,10 +46,11 @@ export default class UserService {
             }, { active: false });
     }
 
-    public async getUsers(limit: number = 20, offset: number = 0): Promise<User[]> {
+    public async getUsers(limit: number, offset: number): Promise<User[]> {
         const query = this.client.db('docapi')
             .collection('users_data').find({})
-            .limit(limit).skip(offset);
+            .limit(Math.abs(limit) || 20)
+            .skip(Math.abs(offset) || 0);
         return await query.toArray();
     }
 
